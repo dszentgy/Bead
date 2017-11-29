@@ -1,0 +1,15 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="DryGoodsDAO" class="com.githup.dszentgy.beadando.dao.mysql.DryGoodsDAOsql">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="PostOfficeDAO" class="com.githup.dszentgy.beadando.dao.mysql.NewspaperDAOsql">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="NewspaperDAO" class="com.githup.dszentgy.beadando.dao.mysql.PostOfficeDAOsql">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+</beans>
