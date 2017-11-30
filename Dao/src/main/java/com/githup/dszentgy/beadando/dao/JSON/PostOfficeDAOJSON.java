@@ -1,4 +1,4 @@
-package com.githup.dszentgy.beadando.dao.mysql;
+package com.githup.dszentgy.beadando.dao.JSON;
 
 import com.githup.dszentgy.beadando.dao.PostOfficeDAO;
 import com.githup.dszentgy.beadando.exception.NotFoundNameException;
@@ -12,7 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 
-public class PostOfficeDAOsql implements PostOfficeDAO {
+public class PostOfficeDAOJSON implements PostOfficeDAO {
     private DataSource dataSource;
 
     public void setDataSource(DataSource dataSource) {

@@ -1,42 +1,43 @@
-package com.githup.dszentgy.beadando.dao.mysql;
+package com.githup.dszentgy.beadando.dao.JSON;
 
-import com.githup.dszentgy.beadando.dao.DryGoodsDAO;
+import com.githup.dszentgy.beadando.dao.NewspaperDAO;
 import com.githup.dszentgy.beadando.exception.NotFoundNameException;
-import com.githup.dszentgy.beadando.model.DryGoods;
-import com.githup.dszentgy.beadando.model.DryGoodsCategory;
+import com.githup.dszentgy.beadando.model.Newspaper;
+import com.githup.dszentgy.beadando.model.NewspaperCategory;
 
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
 
-public class DryGoodsDAOsql implements DryGoodsDAO{
-
+public class NewspaperDAOJSON implements NewspaperDAO {
     private DataSource dataSource;
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
     private Connection connection;
-
     @Override
-    public Collection<DryGoods> readDryGoods() {
-        String selectSQL = "SELECT * FROM drygoods";
+    public Collection<Newspaper> readNewspaper() {
+        String selectSQL = "SELECT * FROM newspaper";
         PreparedStatement preparedStatement = null;
-        Collection<DryGoods> dryGoods = null;
-        DryGoods goods = null;
+        Collection<Newspaper> newspapers = null;
+        Newspaper goods = null;
         try {
             connection=dataSource.getConnection();
             preparedStatement=connection.prepareStatement(selectSQL);
             ResultSet resultSet = preparedStatement.executeQuery();
             boolean isExist = resultSet.next();
             if (isExist){
-                goods = new DryGoods(
-                        (DryGoodsCategory) resultSet.getObject("Categoria"),
+                goods = new Newspaper(
                         resultSet.getString("Tipus"),
                         resultSet.getString("Név"),
                         resultSet.getInt("Ár"),
-                        resultSet.getInt("Mennyiseg"));
-                dryGoods.add(goods);
+                        resultSet.getInt("Mennyiseg"),
+                        (NewspaperCategory) resultSet.getObject("Categoria"));
+                newspapers.add(goods);
             }
             resultSet.close();
             preparedStatement.close();
@@ -44,14 +45,14 @@ public class DryGoodsDAOsql implements DryGoodsDAO{
         }catch (SQLException e){
             throw new RuntimeException(e);
         }
-        return dryGoods;
+        return newspapers;
     }
 
     @Override
-    public DryGoods readDryGoodsByName(String name) {
-        String selectSQL = "SELECT * FROM drygoods WHERE Név = ?";
+    public Newspaper readNewspaperByName(String name) {
+        String selectSQL = "SELECT * FROM newspaper WHERE Név = ?";
         PreparedStatement preparedStatement = null;
-        DryGoods dryGoods = null;
+        Newspaper newspaper = null;
         try {
             connection=dataSource.getConnection();
             preparedStatement=connection.prepareStatement(selectSQL);
@@ -59,72 +60,71 @@ public class DryGoodsDAOsql implements DryGoodsDAO{
             ResultSet resultSet = preparedStatement.executeQuery();
             boolean isExist = resultSet.next();
             if (isExist){
-                dryGoods = new DryGoods(
-                        (DryGoodsCategory) resultSet.getObject("Categoria"),
+                newspaper = new Newspaper(
                         resultSet.getString("Tipus"),
                         resultSet.getString("Név"),
                         resultSet.getInt("Ár"),
-                        resultSet.getInt("Mennyiseg"));
+                        resultSet.getInt("Mennyiseg"),
+                        (NewspaperCategory) resultSet.getObject("Categoria"));
             }
             resultSet.close();
             preparedStatement.close();
         }catch (SQLException e){
             throw new RuntimeException(e);
         }
-        return dryGoods;
+        return newspaper;
     }
 
-
     @Override
-    public void createDryGoods(DryGoods dryGoods) {
-        String updateSQL = "UPDATE drygoods SET Categoria = ?, Tipus = ?, Név = ?, Ár = ?, Mennyiseg = ?";
+    public void createNewspaper(Newspaper newspaper) {
+        String updateSQL = "UPDATE newspaper SET Tipus = ?, Név = ?, Ár = ?, Mennyiseg = ?, Categoria = ?";
         try
         {
             connection=dataSource.getConnection();
             PreparedStatement ps = connection.prepareStatement(updateSQL);
-            ps.setString(1, dryGoods.getCategory().toString());
-            ps.setString(2, dryGoods.getType());
-            ps.setString(3,dryGoods.getName());
-            ps.setInt(4, dryGoods.getPrice());
-            ps.setInt(5, dryGoods.getQuantity());
+            ps.setString(1, newspaper.getType());
+            ps.setString(2,newspaper.getName());
+            ps.setInt(3, newspaper.getPrice());
+            ps.setInt(4, newspaper.getQuantity());
+            ps.setString(5, newspaper.getNewspaperCategory().toString());
         }catch (SQLException e){
             throw new RuntimeException();
         }
-        }
+    }
 
     @Override
-    public void updateDryGoods(DryGoods dryGoods) throws NotFoundNameException{
-        String updateSQL = "UPDATE drygoods SET Categoria = ?, Tipus = ?, Név = ?, Ár = ?, Mennyiseg = ? WHERE  Név=?";
-        DryGoods old = new DryGoods(dryGoods.getCategory(),dryGoods.getType(),dryGoods.getName(),dryGoods.getPrice(),dryGoods.getQuantity());
+    public void updateNewspaper(Newspaper newspaper) throws NotFoundNameException{
+        String updateSQL = "UPDATE newspaper SET Tipus = ?, Név = ?, Ár = ?, Mennyiseg = ?, Categoria = ? WHERE  Név=?";
+        Newspaper old = new Newspaper(newspaper.getType(),newspaper.getName(),newspaper.getPrice(),newspaper.getQuantity(), newspaper.getNewspaperCategory());
         try
         {
             connection=dataSource.getConnection();
             PreparedStatement ps = connection.prepareStatement(updateSQL);
-            ps.setString(1, dryGoods.getCategory().toString());
-            ps.setString(2, dryGoods.getType());
-            ps.setString(3,dryGoods.getName());
-            ps.setInt(4, old.getPrice() + dryGoods.getPrice());
-            ps.setInt(5, old.getQuantity() + dryGoods.getQuantity());
+            ps.setString(1, newspaper.getType());
+            ps.setString(2,newspaper.getName());
+            ps.setInt(3, old.getPrice() + newspaper.getPrice());
+            ps.setInt(4, old.getQuantity() + newspaper.getQuantity());
+            ps.setString(5, newspaper.getNewspaperCategory().toString());
+
             if (ps.executeUpdate()== 0){
                 throw new NotFoundNameException("Can not update because this name does not exist!");
             }
         }catch (SQLException e){
             throw new RuntimeException();
         }
-
     }
 
     @Override
-    public void deleteDryGoods(DryGoods dryGoods) throws NotFoundNameException{
-        String deleteSQL = "DELETE FROM drygoods WHERE Név = ?";
+    public void deleteNewspaper(Newspaper newspaper) throws NotFoundNameException{
+        String deleteSQL = "DELETE FROM newspaper WHERE Név = ?";
         try
         {
             connection=dataSource.getConnection();
             PreparedStatement ps = connection.prepareStatement(deleteSQL);
-            ps.setString(1, dryGoods.getName());
+            ps.setString(1, newspaper.getName());
             if(ps.executeUpdate() == 0)
             {
-                throw new NotFoundNameException("Can not delete because this name does not exist!");
+                throw new NotFoundNameException("Can't delete because this name does not exist!");
             }
         }catch (SQLException e){
             throw new RuntimeException();

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 @Controller
-@RequestMapping("/drygoods")
+@RequestMapping("/d")
 public class DryGoodsController {
 
     private DryGoodsService dryGoodsService;
@@ -17,7 +17,7 @@ public class DryGoodsController {
         this.dryGoodsService = dryGoodsService;
     }
 
-    @RequestMapping(value = "/list", method = {RequestMethod.GET}, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/list", method = {RequestMethod.GET})
     @ResponseBody
     public Collection<DryGoods> listAllDryGoods(){
         return dryGoodsService.getDryGoods();
@@ -33,6 +33,11 @@ public class DryGoodsController {
     public DryGoods addDryGoods(@RequestBody DryGoods dryGoods) throws Exception{
         dryGoodsService.addDryGoods(dryGoods);
         return dryGoods;
+    }
+    @RequestMapping(value = {"/{Name}"}, method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public DryGoods list( @PathVariable(value = "Name") String name)throws NotFoundNameException{
+        return dryGoodsService.getDryGoods(name);
     }
 
 

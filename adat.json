@@ -1,0 +1,7 @@
+[
+  {"category":"SWEETNESS","type":"chocolate", "name":"mars", "price":200,"quantity":5},
+  {"category":"BAUBLE","type":"childGame", "name":"kulcstarto", "price":250,"quantity":4},
+  {"category":"REFRESHING","type":"fizzy", "name":"cola", "price":350,"quantity":10},
+  {"category":"SWEETNESS","type":"chocolate", "name":"snickers", "price":200,"quantity":15},
+  {"category":"SWEETNESS","type":"candy", "name":"dunakavics", "price":150,"quantity":8}
+  ]
